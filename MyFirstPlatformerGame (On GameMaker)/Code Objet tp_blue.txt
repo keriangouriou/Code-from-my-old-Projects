@@ -1,0 +1,96 @@
+Code Objet "tp_blue" :
+
+Évènement Start :
+
+//Initialisation des variables 
+hsp = 0
+vsp = 0
+grv = 0.25
+landed = 0
+grv_timer = 8
+bouncedecay = -0.5
+floor_friction = 0.4
+rotangle = 0
+
+
+
+Évènement Step (équivalent de Update) :
+
+//gravity
+if grv_timer > 0
+{
+	grv = 0.15
+	grv_timer = grv_timer - 1
+}
+
+if grv_timer = 0
+{
+	grv = 0.25
+	vsp = vsp + grv
+}
+
+// friction
+
+if (place_meeting(x,y+vsp,sol))
+{
+	if hsp > 0
+	{
+		hsp = hsp - floor_friction
+	}
+	if hsp < 0
+	{
+		hsp = hsp + floor_friction
+	}
+	if hsp >= -floor_friction and hsp <= floor_friction
+	{
+		hsp = 0
+	}
+}
+//horizontal collision
+
+if (place_meeting(x+hsp,y,sol))
+{
+
+	while (!place_meeting(x+sign (hsp),y,sol))
+	{
+		x = x + sign(hsp);
+	}
+	hsp = hsp * bouncedecay;
+	
+}
+
+//vertical collision
+
+if (place_meeting(x,y+vsp,sol))
+{
+	while (!place_meeting(x,y+sign (vsp),sol))
+	{
+		y = y + sign(vsp)
+	}
+	vsp = vsp * bouncedecay;
+}
+else landed = 0
+
+//rotation direction
+
+if hsp < 0 
+{
+rot_angle = -1	
+}
+
+if hsp > 0 
+{
+rot_angle = 1	
+}
+
+//update position 
+
+x = x + hsp;
+y = y + vsp;
+
+
+
+Évènement Draw :
+
+rotangle = rotangle - hsp*1.2;
+draw_sprite_ext(Sprite_tp_blue,image_index,x,y,image_xscale,image_yscale,rotangle,c_white,1);

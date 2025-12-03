@@ -1,0 +1,120 @@
+Code dans l'objet "perso_jambe" :
+
+Évènement Start :
+
+//Initilisation des variables
+hsp = 0;
+vsp = 0;
+grv = 0.3;
+walksp = 4;
+no_instant_tp = 0;
+cooldown = 0;
+landed = 0;
+
+
+
+Évènement Step (équivalent de Update) :
+ 
+//Get player input
+var key_left = keyboard_check(vk_left) or keyboard_check(ord("Q"));
+var key_right = keyboard_check(vk_right) or keyboard_check(ord("D"));
+var key_jump = keyboard_check_pressed(vk_space);
+
+//movement
+//calculate movement
+
+var move = key_right - key_left;
+
+hsp = move * walksp;
+
+vsp = vsp + grv;
+if (place_meeting(x,y+1,sol))
+{
+	landed = 1;
+}
+else landed = 0;
+if (landed = 1) && (key_jump)
+{
+vsp = -8.7;
+}
+
+
+//horzontal colision
+
+if (place_meeting(x+hsp,y,sol))
+{
+	while (!place_meeting(x+sign (hsp),y,sol))
+	{
+		x = x + sign(hsp);
+	}
+	hsp = 0;
+}
+
+
+
+x = x + hsp;
+
+//vertical collision
+if (place_meeting(x,y+vsp,sol))
+{
+	while (!place_meeting(x,y+sign (vsp),sol))
+	{
+		y = y + sign(vsp);
+	}
+	vsp = 0;
+}
+
+
+
+y = y + vsp;
+
+//teleportation
+
+if perso_head.tp_blue_out = 1 and no_instant_tp < 10
+{
+	no_instant_tp = no_instant_tp + 1;
+}
+
+if (mouse_check_button(mb_left)) and no_instant_tp = 10 and cooldown = 0
+{
+	hsp = 0;
+	vsp = 0;
+	x = tp_blue.x
+	if (place_meeting(tp_blue.x,tp_blue.y-30,sol))
+	{
+		y = tp_blue.y;
+	}
+	else 
+	y = tp_blue.y-30;
+	instance_destroy(tp_blue);
+	perso_head.tp_blue_out = 0;
+	cooldown = 30;
+	no_instant_tp = 0;
+	if perso_head.cooldown <= 8
+	{
+		perso_head.cooldown = 8;
+	}
+}
+if (cooldown > 0) {cooldown = cooldown - 1}
+//Animation
+
+if (landed = 0)
+{
+	sprite_index = Sprite_perso_jump;
+}
+else
+{
+	if (hsp == 0)
+	{
+		sprite_index = Sprite_perso_jambe;
+	}
+	else
+	{
+	sprite_index = Sprite_marche_jambes;
+	}
+}
+
+if (hsp != 0)
+{
+	image_xscale = sign(hsp);
+} 

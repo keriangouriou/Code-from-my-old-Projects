@@ -1,0 +1,74 @@
+Code Objet "perso_head" :
+
+Évènement Start :
+
+//Initialisation des variables 
+tp_blue_out = 0;
+cooldown = 0;
+launchspeed = 0.1;
+
+
+
+Évènement Step (équivalent de Update) :
+
+if (mouse_check_button(mb_left)) and (tp_blue_out = 0) and cooldown = 0
+{
+	tp_blue_out = 1
+	cooldown = 60
+	with (instance_create_layer(x,y,"tp",tp_blue))
+	{
+		if other.image_angle <= 270 and other.image_angle >= 90
+			{
+			var angle_correction_left = other.image_angle - 90
+			if angle_correction_left > 90
+			{
+			angle_correction_left = angle_correction_left - 2*(angle_correction_left - 90)
+			}
+			
+				hsp = -other.launchspeed * angle_correction_left
+			}
+		if other.image_angle <= 180 and other.image_angle >= 0
+			{	
+			var angle_correction_up = other.image_angle
+			if angle_correction_up > 90
+			{
+			angle_correction_up = angle_correction_up - 2*(angle_correction_up - 90)
+			}
+				vsp = -other.launchspeed * angle_correction_up
+			}
+			if other.image_angle <= 90
+			{	
+				var angle_correction_right = other.image_angle
+					angle_correction_right = (angle_correction_right - 90)*(-1)
+					hsp = other.launchspeed * angle_correction_right
+			}
+			if other.image_angle >= 270
+			{
+				var angle_correction_right = other.image_angle
+				angle_correction_right = angle_correction_right - 270
+				hsp = other.launchspeed * angle_correction_right	
+			}
+			if other.image_angle >= 180
+			{	
+				var angle_correction_down = other.image_angle
+				angle_correction_down = angle_correction_down - 180
+				if angle_correction_down > 90
+			{
+			angle_correction_down = angle_correction_down - 2*(angle_correction_down - 90)
+			}
+				vsp = other.launchspeed * angle_correction_down
+			}
+	}
+}
+if cooldown > 0
+cooldown = cooldown -1
+
+
+
+Évènement Endstep :
+
+x = perso_jambe.x;
+y = perso_jambe.y;
+image_angle = point_direction(x,y,mouse_x,mouse_y);
+
+
